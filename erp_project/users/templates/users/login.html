@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERP MS | Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+    
+        .django-form p {
+            margin-bottom: 1.25rem;
+        }
+        .django-form label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #4a5568;
+            font-weight: 500;
+        }
+        .django-form input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-width: 1px;
+            border-color: #d2d6dc;
+            border-radius: 0.5rem;
+        }
+        .django-form input:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px #233b6e;
+        }
+        .django-form input::placeholder {
+            color: #a0a7b4;
+        }
+
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen">
+    <div class="bg-white p-8 md:p-10 rounded-xl shadow-lg w-full max-w-md">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">ERP MS</h1>
+        
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="django-form">
+                {{ form.as_p }}
+            </div>
+
+            {% if form.errors %}
+                <div class="bg-red-100  border-1-4 border-red-500 text-red-700 p-4 mb-3 rounded" role="alert">
+                    <p>{{ form.non_field_errors }}</p>
+                </div>
+            {% endif %}
+
+            <button type="submit" class="w-full bg-[#233b6e] text-white font-semibold py-3 rounded-lg hover:bg-[#1c3a5e] transition-colors duration-300 mt-2">
+                Login
+            </button>
+        </form>
+    </div>
+</body>
+</html>

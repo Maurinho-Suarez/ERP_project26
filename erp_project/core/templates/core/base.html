@@ -1,0 +1,72 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ERP MS{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+
+    <nav class="bg-[#233b6e] text-white shadow-md">
+        <div class="container mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+
+            <a href="{% url 'dashboard' %}" class="text-2xl font-bold rounded-lg px-2 py-1 transition-all hover:bg-white/10">
+                <img src="{% static 'img/logo-erp.jpg' %}" alt="ERP MS" class="h-8 w-8">
+                <span>ERP MS</span>
+            </a>
+            
+            <div class="relative w-full md:w-1/2">
+                <input type="text" id="transaction-input" class="w-full rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-white/50 placeholder-gray-400">
+            </div>
+
+            <div class="flex items-center space-x-6">
+                <div id="nav-links-desktop" class="hidden md:flex space-x-6">
+
+                </div>
+
+                <div class="relative">
+                    <button id="user-menu-button" class="flex items-center space-x-2 text-lg font-medium transition-all hover:bg-white/10 p-2 rounded-lg">
+                        <span>{{ user.first_name|default:user.username }}</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down"><path d="m6 9 6 6 6-6"></path></svg>
+                    </button>
+                    <div id="user-menu-dropdown" class="user-dropdown-menu absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded-md shadow-lgpy-1 z-50" **hidden**>
+                        <a href="#profile" class="flex items-center px-4 py-2 hover:bg-gray-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-user"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><path d="M7 20.662V19a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v1.662"/></svg>
+                            <span class="ml-2">Profile</span>
+                        </a>
+                        
+                        <a href="{% url 'logout' %}" class="flex items-center px-4 py-2 hover:bg-gray-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-out"><path d="M9 21H5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"><line x1="21" x2="9" y1="12" y2="12"></polyline></svg>
+                            <span class="ml-2">Logout</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hamburger-menu space-y-2 md:hidden cursor-pointer" id="hamburger-btn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="md:hidden bg-[#233b6e] pb-4 px-4 text-center trasition-all duration-300 ease-in-out">
+            <div id="nav-links-mobile" class="flex flex-col">
+            
+            </div>
+            <div class="border-t border-gray-600 mt-4 pt-4">
+                <a href="#perfil" class="block py-2 text-lg font-medium transition-all hover:text-gray-300">Logout</a>
+            </div>
+        </div>
+    </nav>
+    <main class="container mx-auto  p-8">
+        {% block content %}
+        
+        {% endblock %}
+
+    </main>
+    <script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>
