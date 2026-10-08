@@ -3,6 +3,44 @@
 from django.db import migrations, models
 
 
+def make_material_ids_unique(apps, schema_editor):
+    Material = apps.get_model('materials', 'Material')
+    database = schema_editor.connection.alias
+    existing_ids = set(
+        Material.objects.using(database)
+        .exclude(id_material__isnull=True)
+        .values_list('id_material', flat=True)
+    )
+    seen_ids = set()
+    duplicate_counts = {}
+
+    materials = list(
+        Material.objects.using(database)
+        .exclude(id_material__isnull=True)
+        .order_by('id_material', 'pk')
+    )
+    for material in materials:
+        original_id = material.id_material
+        if original_id not in seen_ids:
+            seen_ids.add(original_id)
+            duplicate_counts[original_id] = 1
+            continue
+
+        suffix_number = duplicate_counts[original_id] + 1
+        while True:
+            suffix = f'-{suffix_number}'
+            candidate = f'{original_id[:50 - len(suffix)]}{suffix}'
+            if candidate not in existing_ids:
+                break
+            suffix_number += 1
+
+        material.id_material = candidate
+        material.save(using=database, update_fields=['id_material'])
+        existing_ids.add(candidate)
+        seen_ids.add(original_id)
+        duplicate_counts[original_id] = suffix_number
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -10,6 +48,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RunPython(make_material_ids_unique, migrations.RunPython.noop),
         migrations.AlterField(
             model_name='material',
             name='id_material',
