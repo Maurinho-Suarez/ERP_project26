@@ -3,7 +3,7 @@ from django.conf import settings
 
 # Create your models here.
 class Material(models.Model):
-    id_material = models.CharField(max_length=50, null=True, blank=True, verbose_name="Material ID")
+    id_material = models.CharField(max_length=50, null=True, unique=True, verbose_name="Material ID")
     name = models.CharField(max_length=100, verbose_name="Material Name")
     description = models.TextField(max_length=250, blank=True, verbose_name="Material Description")
     unit = models.CharField(max_length=50, verbose_name="Unit measurement")
