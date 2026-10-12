@@ -21,14 +21,14 @@ def suppliers_list(request):
     supplier_list = Supplier.objects.all()
 
     id_supplier = request.GET.get('id_supplier')
-    name = request.GET.get('name')
+    legal_name = request.GET.get('legal_name')
     country = request.GET.get('country')
     status = request.GET.get('status')
 
     if id_supplier:
         supplier_list = supplier_list.filter(id_supplier__icontains=id_supplier)
-    if name:
-        supplier_list = supplier_list.filter(name__icontains=name)
+    if legal_name:
+        supplier_list = supplier_list.filter(legal_name__icontains=legal_name)
     if country:
         supplier_list = supplier_list.filter(country__icontains=country)
     if status:
