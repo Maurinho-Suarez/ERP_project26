@@ -41,6 +41,11 @@
                 Export to CSV
             </a>
         </div>
+        <div class="flex justify-end mb-4">
+            <a href="{% url 'suppliers:supplier_bulk_create' %}" class="bg-indigo-500 text-white font-semibold px-4 py-2 rounded-md shadow-md hover:bg-indigo-700 transition duration-300">
+                Bulk Upload (CSV)
+            </a>
+        </div>
         {% if permissions.suppliers >= 2 %}
         <a href="{% url 'suppliers:supplier_create' %}" class="bg-[#233b6e] text-white font-semibold py-2 px-6 rounded-lg text-center transition-colors duration-300 hover:bg-[#1a2c53]">Add New Supplier</a>
         {% endif %}

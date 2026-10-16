@@ -1,12 +1,15 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
 from .models import Material
-from .forms import MaterialForm
+from .forms import MaterialForm, CsvUploadForm
 from django.core.paginator import Paginator
 from django.http import HttpResponse
 import csv
+import re
+import io
 from django.db import models
 from users.models import UserRole
+from django.contrib import messages
 
 # Create your views here.
 @login_required
@@ -130,3 +133,102 @@ def material_delete(request, pk):
         return redirect('materials:material_list')
     
     return redirect('materials:material_list')
+
+@login_required
+def material_bulk_upload(request):
+    max_permission = UserRole.objects.filter(user_id=request.user).aggregate(max_permission=models.Max('role__materials'))['max_permission'] or 0
+
+    if max_permission < 2:
+        return redirect('materials:material_list')
+
+    if request.method == 'POST':
+        form = CsvUploadForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            csv_file = request.FILES['csv_file']
+
+            try:
+                data_set = csv_file.read().decode('UTF-8')
+            except UnicodeDecodeError:
+                try:
+                    csv_file.seek(0)  # Reset file pointer to the beginning
+                    data_set = csv_file.read().decode('ISO-8859-1')
+                except Exception as e:
+                    messages.error(request, "Error occurred while reading the CSV file.")
+                    return render(request, 'materials/material_bulk_upload.html', {'form': form})
+
+            io_string = io.StringIO(data_set)
+            reader = csv.DictReader(io_string)
+
+            if reader.fieldnames:
+                if reader.fieldnames[0].startswith('\ufeff'):
+                    reader.fieldnames[0] = reader.fieldnames[0].lstrip('\ufeff')
+
+                cleaned_fieldnames = [key.strip() for key in reader.fieldnames]
+                reader.fieldnames = cleaned_fieldnames
+
+            successful_records = []
+            error_records = []
+            suppliers_to_create = []
+
+            for i, row in enumerate(reader):
+                row_number = i + 2
+                form_data = {}
+
+                for key, value in row.items():
+                    cleaned_value = value.strip() if isinstance(value, str) else value
+                    form_data[key] = cleaned_value
+                    
+                form = MaterialForm(form_data)
+
+                if form.is_valid():
+                    material = form.save(commit=False)
+                    material.created_by = request.user
+                    suppliers_to_create.append(material)
+                    successful_records.append({'row': row_number, 'data': form_data})
+                else:
+                    errors = {
+                        field:', '.join(err)
+                        for field, err in form.errors.items()
+                    }
+                    error_records.append({
+                        'row': row_number,
+                        'data': form_data,
+                        'errors': errors
+                    })
+
+            if suppliers_to_create:
+                Material.objects.bulk_create(suppliers_to_create)
+
+            messages.success(request, f"Processed {len(successful_records)} materials created successfully.")
+
+            context = {
+                'form': form,
+                'successful_count': len(successful_records),
+                'error_count': len(error_records),
+                'total_rows': len(successful_records) + len(error_records),
+                'error_records': error_records,
+                'successful_records': successful_records,
+                'report_generated': True,
+            }
+
+            return render(request, 'materials/material_bulk_upload.html', context)
+
+        return render(request, 'materials/material_bulk_upload.html', {'form': form})
+
+    else:
+        form = CsvUploadForm()
+        return render(request, 'materials/material_bulk_upload.html', {'form': form})
+
+@login_required
+def download_template_materials(request):
+
+    header_fields = ['id_material', 'name', 'description', 'unit_price', 'currency', 'category', 'supplier_id', 'stock_quantity', 'reorder_level', 'status']
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="materials_template.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(header_fields)
+
+    return response
