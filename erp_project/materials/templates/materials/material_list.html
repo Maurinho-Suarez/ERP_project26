@@ -18,14 +18,36 @@
         </div>
         <div class="col-span-1">
             <label for="material_type" class="block text-sm font-medium text-gray-700">Material Type</label>
-            <input type="text" name="material_type" id="material_type" value="{{ request.GET.material_type }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+            <select 
+                name="material_type" 
+                id="material_type" 
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                >
+                <option value=""{% if not request.GET.material_type %} selected{% endif %}>All</option>
+                {% for material_type_obj in all_material_types %}
+                <option 
+                    value="{{ material_type_obj.name }}" 
+                    {% if request.GET.material_type == material_type_obj.name %}selected{% endif %}>
+                        {{ material_type_obj.name }}
+                </option>
+                {% endfor %}
+            </select>
         </div>
         <div class="col-span-1">
             <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
-            <select name="status" id="status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                <option value="" {% if not request.GET.status %}selected{% endif %}>All</option>
-                <option value="Active" {% if not request.GET.status == "Active" %}selected{% endif %}>Active</option>
-                <option value="Inactive" {% if not request.GET.status == "Inactive" %}selected{% endif %}>Inactive</option>
+            <select 
+                name="status" 
+                id="status" 
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                >
+                {% for status_obj in all_statuses %}
+                <option 
+                    value="{{ status_obj.name }}" 
+                    {% if request.GET.status == status_obj.name %}selected{% endif %}
+                    >
+                        {{ status_obj.name }}
+                </option>
+                {% endfor %}
             </select>
         </div>
 
@@ -75,10 +97,10 @@
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{material.id_material}}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{material.name}}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{material.description}}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{material.unit}}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{material.material_type}}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{material.unit.symbol}}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{material.material_type.symbol}}</td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {% if material.status == 'Active' %}bg-green-100 text-green-800{% else %} bg-red-100 text-red-800{% endif %}">
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {% if material.status.name == 'Active' %}bg-green-100 text-green-800{% else %} bg-red-100 text-red-800{% endif %}">
                         {{material.status}}
                     </span>
                 </td>

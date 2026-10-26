@@ -46,23 +46,34 @@
              <div class="flex items-center space-x-4">
                 <label for="{{ form.unit.id_for_label }}" class="block text-sm font-medium text-gray-700 w-1/3">Unit</label>
                 <div class="mt-1 w-2/3">
-                   <input type="text" name="{{ form.unit.html_name }}" id="{{form.unit.id_for_label}}" value="{{ form.unit.value|default:'' }}" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#233b6e]" required>
+                    {{ form.unit }}
+                    {% if form.unit.errors %}
+                    <div class="bg-red-100 border-1-4 border-red-500 text-red-700 p-2 mt-2 rounded text-sm">
+                        {{ form.unit.errors }}
+                    </div>
+                    {% endif %}
                 </div>
             </div>
              <div class="flex items-center space-x-4">
                 <label for="{{ form.material_type.id_for_label }}" class="block text-sm font-medium text-gray-700 w-1/3">Material Type</label>
                 <div class="mt-1 w-2/3">
-                   <input type="text" name="{{ form.material_type.html_name }}" id="{{form.material_type.id_for_label}}" value="{{ form.material_type.value|default:'' }}" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#233b6e]" required>
+                   {{ form.material_type }}
+                    {% if form.material_type.errors %}
+                    <div class="bg-red-100 border-1-4 border-red-500 text-red-700 p-2 mt-2 rounded text-sm">
+                        {{ form.material_type.errors }}
+                    </div>
+                    {% endif %}
                 </div>
             </div>
              <div class="flex items-center space-x-4">
                 <label for="{{ form.status.id_for_label }}" class="block text-sm font-medium text-gray-700 w-1/3">Status</label>
                 <div class="mt-1 w-2/3">
-                   <select name="{{ form.status.html_name }}" id="{{form.status.id_for_label}}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#233b6e]" required>
-                      <option value="active" {% if form.status.value == "Active" %}selected{% endif %}>Active</option>
-                      <option value="inactive" {% if form.status.value == "Inactive" %}selected{% endif %}>Inactive</option>
-                      <input type="hidden" name="{{ form.created_by_id.html_name }}" value="{{user.username}}">
-                   </select>
+                   {{ form.status }}
+                    {% if form.status.errors %}
+                    <div class="bg-red-100 border-1-4 border-red-500 text-red-700 p-2 mt-2 rounded text-sm">
+                        {{ form.status.errors }}
+                    </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
