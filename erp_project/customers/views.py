@@ -173,8 +173,12 @@ def customer_bulk_create(request):
                 except Exception as e:
                     return render(request, 'customers/customer_bulk_upload.html', {'form': form})
 
-            io_string = io.StringIO(data_set)
-            reader = csv.DictReader(io_string)
+            io_string = io.StringIO(data_set, newline='')
+            try:
+                dialect = csv.Sniffer().sniff(data_set[:4096], delimiters=',;\t|')
+            except csv.Error:
+                dialect = csv.excel
+            reader = csv.DictReader(io_string, dialect=dialect)
 
             if reader.fieldnames:
                 if reader.fieldnames[0].startswith('\ufeff'):
@@ -251,4 +255,3 @@ def download_template_customers(request):
     return response
 
     
-
