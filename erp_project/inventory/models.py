@@ -35,7 +35,7 @@ class LocationInventory(models.Model):
         verbose_name_plural = "Inventory Locations"
 
     def __str__(self):
-        return f"{self.symbol} - {self.name}"
+        return f"{self.code} - {self.name}"
 
 
 class InventoryMovements(models.Model):
